@@ -4,15 +4,13 @@ require "nats/client"
 
 module Cosmo
   class Client
-    NATS_URL = ENV.fetch("NATS_URL", "nats://localhost:4222")
-
     def self.instance
       @instance ||= Client.new
     end
 
     attr_reader :client, :stream
 
-    def initialize(nats_url: NATS_URL)
+    def initialize(nats_url: ENV.fetch("NATS_URL", "nats://localhost:4222"))
       @client = NATS.connect(nats_url)
       @stream = @client.jetstream
     end
