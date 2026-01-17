@@ -90,6 +90,7 @@ module Cosmo
     end
 
     def set(...)
+      @config ||= {}
       Utils::Hash.set(@config, ...)
     end
 
