@@ -1,0 +1,18 @@
+module Cosmo
+  module Utils
+    class ThreadPool
+      @mutex: Thread::Mutex
+      @available: Integer
+      @cond: Thread::ConditionVariable
+      @pool: untyped
+
+      def initialize: (Integer concurrency) -> void
+
+      def post: () { () -> void } -> void
+
+      def shutdown: () -> void
+
+      def wait_for_termination: (Integer? timeout) -> bool
+    end
+  end
+end

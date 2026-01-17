@@ -15,7 +15,7 @@ module Cosmo
       delegate %i[shutdown wait_for_termination] => :@pool
 
       def initialize(concurrency)
-        @mutex = Mutex.new
+        @mutex = Thread::Mutex.new
         @available = concurrency
         @cond = ConditionVariable.new
         @pool = Concurrent::FixedThreadPool.new(concurrency)

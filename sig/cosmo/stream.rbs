@@ -1,0 +1,32 @@
+module Cosmo
+  module Stream
+    def self.included: (Class base) -> void
+
+    module ClassMethods
+      @default_options: Hash[Symbol, untyped]
+
+      def options: (
+        ?stream: Symbol?,
+        ?consumer_name: ::String?,
+        ?batch_size: Integer?,
+        ?start_position: (Symbol | ::String | Time)?,
+        ?consumer: Hash[Symbol, untyped]?,
+        ?publisher: Hash[Symbol, untyped]?
+      ) -> Hash[Symbol, untyped]
+
+      def publish: (untyped data, ?subject: ::String?, **untyped options) -> bool
+
+      def default_options: () -> Hash[Symbol, untyped]
+
+      def register: () -> void
+    end
+
+    def process: (Array[Message] messages) -> void
+
+    def process_one: (*untyped) -> void
+
+    def logger: () -> untyped
+
+    def publish: (untyped data, ::String subject, **untyped options) -> bool
+  end
+end

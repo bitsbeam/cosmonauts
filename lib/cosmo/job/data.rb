@@ -29,7 +29,7 @@ module Cosmo
       end
 
       def subject(target: false)
-        ["jobs", stream(target:), Utils::String.underscore(@class_name)]
+        ["jobs", stream(target:).to_s, Utils::String.underscore(@class_name)]
       end
 
       def as_json

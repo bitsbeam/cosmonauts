@@ -39,7 +39,7 @@ module Cosmo
         end
       end
 
-      def process(stream_name, messages)
+      def process(stream_name, messages) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         metadata = messages.last.metadata
         processor = @processors[stream_name]
         serializer = processor.class.default_options.dig(:publisher, :serializer)
@@ -63,17 +63,17 @@ module Cosmo
         raise
       end
 
-      def setup_configs
+      def setup_configs # rubocop:disable Metrics/AbcSize
         @configs.merge!(
-          Config.dig(:consumers, :streams).to_h {
+          Config.dig(:consumers, :streams).to_h do
             klass = Utils::String.safe_constantize(it[:class])
             [it[:stream].to_sym, klass ? it.merge(class: klass) : nil]
-          }.compact
+          end.compact
         )
         @configs.merge!(
-          Config.system[:streams].to_h {
+          Config.system[:streams].to_h do
             [it.default_options[:stream].to_sym, it.default_options.merge(class: it)]
-          }
+          end
         )
       end
 

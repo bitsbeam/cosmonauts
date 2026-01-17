@@ -1,11 +1,35 @@
 module Cosmo
   module Job
-    DEFAULT_OPTIONS: Hash[Symbol, String | Integer | bool]
+    def self.included: (Class base) -> void
 
-    def self.included: -> untyped
+    module ClassMethods
+      @default_options: Hash[Symbol, untyped]
 
-    def jid: -> String
+      def options: (?stream: Symbol?, ?retry: Integer?, ?dead: bool?) -> Hash[Symbol, untyped]
 
-    def perform: -> untyped
+      def perform: (*untyped args, ?async: bool, **untyped options) -> (::String | nil)
+
+      def perform_async: (*untyped args) -> ::String
+
+      def perform_at: (Integer | Time timestamp, *untyped args) -> ::String
+
+      def perform_in: (Integer | Float interval, *untyped args) -> ::String
+
+      def perform_sync: (*untyped args) -> void
+
+      def default_options: () -> Hash[Symbol, untyped]
+
+      private
+
+      def client: () -> Client
+    end
+
+    attr_reader jid: ::String
+
+    def jid=: (::String) -> ::String
+
+    def perform: (*untyped) -> untyped
+
+    def logger: () -> untyped
   end
 end

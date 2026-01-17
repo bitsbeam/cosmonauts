@@ -20,3 +20,9 @@ Lint/ItWithoutArgumentsInBlock:
 
 Layout/LineLength:
   Max: 160
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ClassLength:
+  Max: 120

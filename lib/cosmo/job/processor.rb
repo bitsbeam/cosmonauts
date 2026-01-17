@@ -43,7 +43,7 @@ module Cosmo
         end
       end
 
-      def schedule_loop
+      def schedule_loop # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         while running?
           break unless running?
 
@@ -70,7 +70,7 @@ module Cosmo
         end
       end
 
-      def process(messages)
+      def process(messages) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         message = messages.first
         Logger.debug "received messages #{messages.inspect}"
         data = Utils::Json.parse(message.data)
@@ -101,7 +101,7 @@ module Cosmo
         Logger.debug "processed message #{message.inspect}"
       end
 
-      def handle_failure(message, data)
+      def handle_failure(message, data) # rubocop:disable Metrics/AbcSize
         current_attempt = message.metadata.num_delivered
         max_retries = data[:retry].to_i + 1
 

@@ -1,0 +1,21 @@
+module Cosmo
+  class Engine
+    PROCESSORS: Hash[Symbol, Class]
+
+    self.@instance: Engine
+    @concurrency: Integer
+    @pool: Utils::ThreadPool
+    @running: untyped
+    @processors: Array[Processor]
+
+    def self.run: (*untyped) -> void
+
+    def self.instance: () -> Engine
+
+    def initialize: () -> void
+
+    def run: (::String? type) -> void
+
+    def shutdown: () -> void
+  end
+end

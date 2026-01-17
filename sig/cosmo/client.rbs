@@ -1,0 +1,22 @@
+module Cosmo
+  class Client
+    self.@instance: Client
+    @client: untyped
+    @stream: untyped
+
+    def self.instance: () -> Client
+
+    attr_reader client: untyped
+    attr_reader stream: untyped
+
+    def initialize: (?nats_url: ::String) -> void
+
+    def publish: (::String subject, ::String payload, **untyped params) -> untyped
+
+    def subscribe: (::String | Array[::String] subject, ::String consumer_name, Hash[Symbol, untyped] config) -> untyped
+
+    def stream_info: (::String | Symbol name) -> untyped
+
+    def create_stream: (::String | Symbol name, Hash[Symbol, untyped] config) -> untyped
+  end
+end

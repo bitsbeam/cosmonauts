@@ -1,3 +1,20 @@
 module Cosmo
-  VERSION: String
+  VERSION: ::String
+
+  class Error < StandardError
+  end
+
+  class ArgumentError < Error
+  end
+
+  class NotImplementedError < Error
+  end
+
+  class ConfigNotFoundError < Error
+    def initialize: (::String config_file) -> void
+  end
+
+  class StreamNotFoundError < Error
+    def initialize: (::String stream_name) -> void
+  end
 end

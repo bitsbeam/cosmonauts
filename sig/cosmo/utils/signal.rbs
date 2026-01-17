@@ -1,0 +1,13 @@
+module Cosmo
+  module Utils
+    class Signal
+      @queue: Queue[Symbol]
+
+      def self.trap: (*Symbol signals) -> Signal
+
+      def initialize: (*Symbol signals) -> void
+
+      def wait: () -> Symbol
+    end
+  end
+end

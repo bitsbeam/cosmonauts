@@ -18,7 +18,7 @@ module Cosmo
       YAML.load_file(path, aliases: true).tap { normalize!(_1) }
     end
 
-    def self.normalize!(config)
+    def self.normalize!(config) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       Utils::Hash.symbolize_keys!(config)
 
       config[:consumers]&.each_key do |name|
@@ -40,8 +40,6 @@ module Cosmo
 
     def self.deliver_policy(start_position)
       case start_position
-      when "first", :first
-        { deliver_policy: "all" }
       when "last", :last
         { deliver_policy: "last" }
       when "new", :new
@@ -82,7 +80,7 @@ module Cosmo
     def dig(*keys)
       return @config&.dig(*keys) if @config && Utils::Hash.keys?(@config, *keys)
 
-      @defaults&.dig(*keys)
+      @defaults.dig(*keys)
     end
 
     def to_h

@@ -27,7 +27,7 @@ module Cosmo
         @default_options ||= Utils::Hash.dup(superclass.respond_to?(:default_options) ? superclass.default_options : Data::DEFAULTS)
       end
 
-      def register
+      def register # rubocop:disable Metrics/AbcSize
         Config.system[:streams] ||= []
         Config.system[:streams] << self
 

@@ -1,0 +1,21 @@
+module Cosmo
+  class CLI
+    def self.run: () -> void
+
+    def self.banner: () -> ::String
+
+    def run: () -> void
+
+    private
+
+    def parse: () -> [Hash[Symbol, untyped], ::String?, Hash[Symbol, untyped]]
+
+    def load_config: (::String? path) -> void
+
+    def require_files: (::String? path) -> void
+
+    def flags_parser: (Hash[Symbol, untyped] flags) -> untyped
+
+    def options_parser: (::String? command, Hash[Symbol, untyped] options) -> untyped
+  end
+end

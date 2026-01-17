@@ -1,0 +1,29 @@
+module Cosmo
+  class Processor
+    @pool: Utils::ThreadPool
+    @running: untyped
+    @consumers: Hash[Symbol, untyped]
+
+    def self.run: (*untyped) -> Processor
+
+    def initialize: (Utils::ThreadPool pool, untyped running) -> void
+
+    def run: () -> void
+
+    private
+
+    def run_loop: () -> void
+
+    def setup: () -> void
+
+    def process: (*untyped) -> void
+
+    def running?: () -> bool
+
+    def fetch_messages: (Symbol stream_name, batch_size: Integer, timeout: Float) ?{ (Array[untyped]) -> void } -> void
+
+    def client: () -> Client
+
+    def stopwatch: () -> Utils::Stopwatch
+  end
+end

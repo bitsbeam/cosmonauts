@@ -4,7 +4,7 @@ require "yaml"
 require "optparse"
 
 module Cosmo
-  class CLI
+  class CLI # rubocop:disable Metrics/ClassLength
     def self.run
       new.run
     end
@@ -55,8 +55,8 @@ module Cosmo
       end
     end
 
-    def flags_parser(flags)
-      OptionParser.new do |o|
+    def flags_parser(flags) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      OptionParser.new do |o| # rubocop:disable Metrics/BlockLength
         o.banner = "Usage: cosmo [flags] [command] [options]"
         o.separator ""
         o.separator "Command:"
@@ -107,7 +107,7 @@ module Cosmo
       end
     end
 
-    def options_parser(command, options)
+    def options_parser(command, options) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       case command
       when "jobs"
         OptionParser.new do |o|

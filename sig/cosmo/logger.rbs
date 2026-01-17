@@ -1,0 +1,39 @@
+module Cosmo
+  module Logger
+    module Context
+      KEY: Symbol
+
+      def self.with: (**untyped options) ?{ () -> void } -> (nil | Hash[Symbol, untyped])
+
+      def self.without: (*Symbol keys) -> nil
+
+      def self.current: () -> Hash[Symbol, untyped]
+    end
+
+    class BaseFormatter
+      def tid: () -> ::String
+
+      def pid: () -> Integer
+    end
+
+    class SimpleFormatter < BaseFormatter
+      def call: (::String severity, Time time, untyped _, ::String msg) -> ::String
+    end
+
+    def self.info: (::String) -> void
+
+    def self.error: (::String | Exception) -> void
+
+    def self.debug: (::String | Exception) -> void
+
+    def self.warn: (::String) -> void
+
+    def self.fatal: (::String) -> void
+
+    def self.with: (**untyped) ?{ () -> void } -> void
+
+    def self.without: (*Symbol) -> nil
+
+    def self.instance: () -> untyped
+  end
+end

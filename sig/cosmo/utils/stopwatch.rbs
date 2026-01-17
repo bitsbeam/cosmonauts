@@ -1,0 +1,19 @@
+module Cosmo
+  module Utils
+    class Stopwatch
+      @started_at: Float
+
+      def initialize: () -> void
+
+      def elapsed_millis: () -> Float
+
+      def elapsed_seconds: () -> Float
+
+      def reset: () -> void
+
+      private
+
+      def clock_time: () -> Float
+    end
+  end
+end

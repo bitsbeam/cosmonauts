@@ -1,0 +1,23 @@
+module Cosmo
+  module Job
+    class Processor < ::Cosmo::Processor
+      @weights: Array[Symbol]
+
+      def initialize: (Utils::ThreadPool pool, untyped running) -> void
+
+      private
+
+      def run_loop: () -> void
+
+      def setup: () -> void
+
+      def work_loop: () -> void
+
+      def schedule_loop: () -> void
+
+      def process: (Array[untyped] messages) -> void
+
+      def handle_failure: (untyped message, Hash[Symbol, untyped] data) -> void
+    end
+  end
+end

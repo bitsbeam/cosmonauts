@@ -1,0 +1,35 @@
+module Cosmo
+  module Job
+    class Data
+      DEFAULTS: { stream: Symbol, retry: Integer | bool, dead: bool }
+
+      @class_name: ::String
+      @args: Array[untyped]
+      @options: Hash[Symbol, untyped]
+      @at: Integer?
+      @subject: ::String?
+
+      attr_reader jid: ::String
+
+      def initialize: (::String class_name, Array[untyped] args, ?Hash[Symbol, untyped]? options) -> void
+
+      def stream: (?target: bool) -> Symbol
+
+      def subject: (?target: bool) -> Array[::String]
+
+      def as_json: () -> { jid: ::String, class: ::String, args: Array[untyped], retry: Integer, dead: bool }
+
+      def to_json: (*untyped _args) -> ::String?
+
+      def to_args: () -> [::String, ::String, Hash[Symbol, untyped]]
+
+      private
+
+      def validate!: () -> void
+
+      def retries: () -> (Integer | bool)
+
+      def dead: () -> bool
+    end
+  end
+end

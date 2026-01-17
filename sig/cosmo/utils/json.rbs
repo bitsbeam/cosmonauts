@@ -1,8 +1,13 @@
 module Cosmo
   module Utils
     module Json
-      def parse: -> untyped?
-      def dump: -> ::String?
+      def self.parse: (::String value, ?default: untyped?, ?symbolize_names: bool, **untyped options) -> untyped
+
+      def self.dump: (untyped value, ?default: untyped?) -> ::String?
+
+      def parse: (::String value, ?default: untyped?, ?symbolize_names: bool, **untyped options) -> untyped
+
+      def dump: (untyped value, ?default: untyped?) -> ::String?
     end
   end
 end

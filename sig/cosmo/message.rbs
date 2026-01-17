@@ -1,29 +1,24 @@
 module Cosmo
-  class Message
-    DEFAULTS: { stream: Symbol, retry: Integer, dead: bool }
+  module Stream
+    class Message
+      @msg: untyped
+      @serializer: Module
 
-    @args: Array[untyped]
-    @at: Integer?
-    @class_name: String
-    @options: Hash[Symbol, untyped]
-    @subject: String
+      def initialize: (untyped msg, ?serializer: Module?) -> void
 
-    attr_reader jid: String
+      def subject: () -> ::String
 
-    def initialize: (String, Array[untyped], Hash[Symbol, untyped]?) -> void
+      def reply: () -> ::String?
 
-    def stream: (?target: bool?) -> Symbol
+      def header: () -> Hash[::String, untyped]
 
-    def subject: (?target: bool?) -> Array[String | Symbol]
+      def ack: () -> void
 
-    def as_json: -> { jid: String, class: String, args: Array[untyped], retry: Integer }
+      def nack: (?delay: Integer?) -> void
 
-    def to_json: -> String
+      def term: () -> void
 
-    def to_args: -> [String, String, Hash[Symbol, untyped]]
-
-    private
-
-    def validate!: -> void
+      def data: () -> untyped
+    end
   end
 end

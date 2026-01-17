@@ -1,0 +1,13 @@
+module Cosmo
+  module Stream
+    module Serializer
+      def self.serialize: (untyped data) -> ::String?
+
+      def self.deserialize: (::String payload) -> untyped
+
+      def deserialize: (::String payload) -> untyped
+
+      def serialize: (untyped data) -> ::String?
+    end
+  end
+end
