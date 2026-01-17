@@ -14,7 +14,6 @@ module Cosmo
       load_config(flags[:config_file])
       puts self.class.banner
       require_files(flags[:require])
-      create_streams
       Engine.run(command)
     end
 
@@ -43,12 +42,6 @@ module Cosmo
       end
 
       Config.load(path)
-    end
-
-    def create_streams
-      Config[:streams].each do |name, config|
-        Client.instance.maybe_create_stream(name, config)
-      end
     end
 
     def require_files(path)
@@ -91,7 +84,13 @@ module Cosmo
 
         o.on "-S", "--setup", "Load config, create streams and exit" do
           load_config(flags[:config_file])
-          create_streams
+
+          Config[:streams].each do |name, config|
+            Client.instance.stream_info(name)
+          rescue NATS::JetStream::Error::NotFound
+            Client.instance.create_stream(name, config)
+          end
+
           puts "Cosmo streams were created/updated"
           exit(0)
         end

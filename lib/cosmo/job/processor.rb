@@ -2,28 +2,18 @@
 
 module Cosmo
   module Job
-    class Processor
-      def self.run(...)
-        new(...).tap(&:run)
-      end
-
+    class Processor < ::Cosmo::Processor
       def initialize(pool, running)
-        @pool = pool
-        @running = running
-        @consumers = {}
+        super
         @weights = []
       end
 
-      def run
-        setup
-        return unless @consumers.any?
+      private
 
-        @running.make_true
+      def run_loop
         Thread.new { work_loop }
         Thread.new { schedule_loop }
       end
-
-      private
 
       def setup
         jobs_config = Config.dig(:consumers, :jobs)
@@ -32,38 +22,34 @@ module Cosmo
           subject = config.delete(:subject)
           priority = config.delete(:priority)
           @weights += ([stream_name] * priority.to_i) if priority
-          @consumers[stream_name] = Client.instance.stream.pull_subscribe(subject, consumer_name, config: config)
+          @consumers[stream_name] = client.subscribe(subject, consumer_name, config)
         end
       end
 
-      def work_loop(timeout: ENV.fetch("COSMO_JOBS_FETCH_TIMEOUT", 0.1).to_f)
-        while @running
-          @weights.shuffle.each do |name|
-            break unless @running.true?
+      def work_loop
+        while running?
+          @weights.shuffle.each do |stream_name|
+            break unless running?
 
             begin
-              message = @consumers[name].fetch(1, timeout: timeout)
-              @pool.post { process(message.first) }
-            rescue NATS::Timeout
-              # No messages, continue
-            rescue StandardError => e
-              Logger.debug e
-            rescue Exception => e # rubocop:disable Lint/RescueException, Lint/DuplicateBranch
-              Logger.debug e # Unexpected error!
+              timeout = ENV.fetch("COSMO_JOBS_FETCH_TIMEOUT", 0.1).to_f
+              @pool.post { fetch_messages(stream_name, batch_size: 1, timeout:) }
+            rescue Concurrent::RejectedExecutionError
+              break # pool doesn't accept new jobs, we are shutting down
             end
 
-            break unless @running.true?
+            break unless running?
           end
         end
       end
 
-      def schedule_loop(timeout: ENV.fetch("COSMO_JOBS_SCHEDULER_FETCH_TIMEOUT", 5).to_f)
-        while @running
-          break unless @running.true?
+      def schedule_loop
+        while running?
+          break unless running?
 
-          begin
+          timeout = ENV.fetch("COSMO_JOBS_SCHEDULER_FETCH_TIMEOUT", 5).to_f
+          fetch_messages(:scheduled, batch_size: 100, timeout:) do |messages|
             now = Time.now.to_i
-            messages = @consumers[:scheduled].fetch(100, timeout: timeout)
             messages.each do |message|
               headers = message.header.except("X-Stream", "X-Subject", "X-Execute-At", "Nats-Expected-Stream")
               stream, subject, execute_at = message.header.values_at("X-Stream", "X-Subject", "X-Execute-At")
@@ -71,23 +57,22 @@ module Cosmo
               execute_at = execute_at.to_i
 
               if now >= execute_at
-                Client.instance.publish(subject, message.data, headers: headers)
+                client.publish(subject, message.data, headers: headers)
                 message.ack
               else
                 delay_ns = (execute_at - now) * 1_000_000_000
                 message.nak(delay: delay_ns)
               end
             end
-          rescue NATS::Timeout
-            # No messages, continue
           end
 
-          break unless @running.true?
+          break unless running?
         end
       end
 
-      def process(message)
-        Logger.debug "received message #{message.inspect}"
+      def process(messages)
+        message = messages.first
+        Logger.debug "received messages #{messages.inspect}"
         data = Utils::Json.parse(message.data)
         Logger.debug ArgumentError.new("malformed payload") and return unless data
 
@@ -95,9 +80,9 @@ module Cosmo
         Logger.debug ArgumentError.new("#{data[:class]} class not found") and return unless worker_class
 
         begin
+          sw = stopwatch
           Logger.with(jid: data[:jid])
           Logger.info "start"
-          sw = Utils::Stopwatch.new
           instance = worker_class.new
           instance.jid = data[:jid]
           instance.perform(*data[:args])

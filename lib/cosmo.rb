@@ -9,6 +9,7 @@ require "cosmo/utils/thread_pool"
 
 require "cosmo/client"
 require "cosmo/publisher"
+require "cosmo/processor"
 require "cosmo/version"
 require "cosmo/config"
 require "cosmo/logger"

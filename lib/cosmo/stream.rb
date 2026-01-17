@@ -17,10 +17,10 @@ module Cosmo
         default_options.merge!({ stream: stream, consumer_name: consumer_name, batch_size:, start_position:, consumer:, publisher: }.compact)
       end
 
-      def publish(data, subject: nil)
+      def publish(data, subject: nil, **options)
         stream = default_options[:stream]
         subject ||= default_options.dig(:publisher, :subject)
-        Publisher.publish(subject, data, stream: stream, serializer: default_options.dig(:publisher, :serializer))
+        Publisher.publish(subject, data, stream: stream, serializer: default_options.dig(:publisher, :serializer), **options)
       end
 
       def default_options
@@ -58,8 +58,8 @@ module Cosmo
       Logger.instance
     end
 
-    def publish
-      # TODO: impl
+    def publish(data, subject, **options)
+      self.class.publish(data, subject:, **options)
     end
   end
 end

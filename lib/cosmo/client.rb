@@ -19,9 +19,15 @@ module Cosmo
       @stream.publish(subject, payload, **params)
     end
 
-    def maybe_create_stream(name, config)
+    def subscribe(subject, consumer_name, config)
+      @stream.pull_subscribe(subject, consumer_name, config: config)
+    end
+
+    def stream_info(name)
       @stream.stream_info(name)
-    rescue NATS::JetStream::Error::NotFound
+    end
+
+    def create_stream(name, config)
       @stream.add_stream(name: name, **config)
     end
   end
