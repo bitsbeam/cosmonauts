@@ -43,7 +43,7 @@ module Cosmo
 
             begin
               message = @consumers[name].fetch(1, timeout: timeout)
-              @pool.post { process_job(message.first) }
+              @pool.post { process(message.first) }
             rescue NATS::Timeout
               # No messages, continue
             rescue StandardError => e
@@ -87,7 +87,7 @@ module Cosmo
         end
       end
 
-      def process_job(message)
+      def process(message)
         puts "#perform start #{message.inspect}"
         data = Utils::Json.parse(message.data)
         raise ArgumentError, "malformed payload" unless data

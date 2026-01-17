@@ -38,6 +38,23 @@ module Cosmo
       end
     end
 
+    def self.deliver_policy(start_position)
+      case start_position
+      when "first", :first
+        { deliver_policy: "all" }
+      when "last", :last
+        { deliver_policy: "last" }
+      when "new", :new
+        { deliver_policy: "new" }
+      when Time
+        { deliver_policy: "by_start_time", opt_start_time: start_position.iso8601 }
+      when String
+        { deliver_policy: "by_start_time", opt_start_time: start_position }
+      else
+        { deliver_policy: "all" }
+      end
+    end
+
     def self.instance
       @instance ||= new
     end

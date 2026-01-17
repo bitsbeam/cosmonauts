@@ -31,8 +31,9 @@ module Cosmo
 
         @configs.each do |stream_name, config|
           subjects = config.dig(:consumer, :subjects)
+          deliver_policy = Config.deliver_policy(config[:start_position])
           config, consumer_name = config.values_at(:consumer, :consumer_name)
-          @consumers[stream_name] = Client.instance.stream.pull_subscribe(subjects, consumer_name, config: config)
+          @consumers[stream_name] = Client.instance.stream.pull_subscribe(subjects, consumer_name, config: config.merge(deliver_policy))
         end
       end
 
@@ -43,7 +44,7 @@ module Cosmo
 
             begin
               messages = consumer.fetch(@configs[stream_name][:batch_size], timeout: timeout)
-              @pool.post { process_job(@processors[stream_name], messages) }
+              @pool.post { process(@processors[stream_name], messages) }
             rescue Concurrent::RejectedExecutionError
               break # pool doesn't accept new jobs, exiting
             rescue NATS::Timeout
@@ -60,7 +61,7 @@ module Cosmo
         end
       end
 
-      def process_job(processor, messages)
+      def process(processor, messages)
         serializer = processor.class.default_options.dig(:publisher, :serializer)
         messages = messages.map { |it| Message.new(it, serializer:) }
         processor.process(messages)
