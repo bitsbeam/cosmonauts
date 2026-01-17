@@ -10,12 +10,12 @@ module Cosmo
     end
 
     def run
-      flags, _options = parse
+      flags, command, _options = parse
       load_config(flags[:config_file])
       puts self.class.banner
       require_files(flags[:require])
       create_streams
-      Engine.run
+      Engine.run(command)
     end
 
     private
@@ -30,7 +30,7 @@ module Cosmo
       parser = options_parser(command, options)
       parser&.order!
 
-      [flags, options]
+      [flags, command, options]
     end
 
     def load_config(path)

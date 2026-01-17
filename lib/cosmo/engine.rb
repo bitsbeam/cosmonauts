@@ -4,8 +4,13 @@ require "concurrent-ruby"
 
 module Cosmo
   class Engine
-    def self.run
-      instance.run
+    PROCESSORS = {
+      jobs: Job::Processor,
+      streams: Stream::Processor
+    }.freeze
+
+    def self.run(...)
+      instance.run(...)
     end
 
     def self.instance
@@ -18,10 +23,12 @@ module Cosmo
       @running = Concurrent::AtomicBoolean.new
     end
 
-    def run(processors = [Job::Processor, Stream::Processor])
+    def run(type)
       handler = Utils::Signal.trap(:INT, :TERM)
       Logger.info "Starting processing, hit Ctrl-C to stop"
-      @processors = processors.map { it.run(@pool, @running) }
+
+      @processors = type && PROCESSORS.key?(type.to_sym) ? [PROCESSORS[type.to_sym]] : PROCESSORS.values
+      @processors = @processors.map { it.run(@pool, @running) }
 
       signal = handler.wait
       Logger.info "Shutting down... (#{signal} received)"

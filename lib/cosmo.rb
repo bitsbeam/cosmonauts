@@ -8,7 +8,6 @@ require "cosmo/utils/stopwatch"
 require "cosmo/utils/thread_pool"
 
 require "cosmo/client"
-require "cosmo/engine"
 require "cosmo/publisher"
 require "cosmo/version"
 require "cosmo/config"
@@ -16,6 +15,7 @@ require "cosmo/logger"
 require "cosmo/job"
 require "cosmo/stream"
 require "cosmo/cli"
+require "cosmo/engine"
 
 module Cosmo
   class Error < StandardError; end
