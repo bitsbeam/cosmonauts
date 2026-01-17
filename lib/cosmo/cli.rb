@@ -5,26 +5,32 @@ require "optparse"
 
 module Cosmo
   class CLI
-    def self.run(...)
-      new.run(...)
+    def self.run
+      new.run
     end
 
-    def run(argv)
-      options = parse(argv)
-      load_config(options[:config_file])
+    def run
+      flags, _options = parse
+      load_config(flags[:config_file])
       puts self.class.banner
-      require_files(options[:require])
+      require_files(flags[:require])
       create_streams
       Engine.run
     end
 
     private
 
-    def parse(argv)
+    def parse
+      flags = {}
+      parser = flags_parser(flags)
+      parser.order!
+
       options = {}
-      parser = option_parser(options)
-      parser.parse!(argv)
-      options
+      command = ARGV.shift
+      parser = options_parser(command, options)
+      parser&.order!
+
+      [flags, options]
     end
 
     def load_config(path)
@@ -56,44 +62,95 @@ module Cosmo
       end
     end
 
-    def option_parser(options)
-      parser = OptionParser.new do |o|
-        o.on "-c", "--concurrency INT", "Threads to use" do |arg|
-          options[:concurrency] = Integer(arg)
+    def flags_parser(flags)
+      OptionParser.new do |o|
+        o.banner = "Usage: cosmo [flags] [command] [options]"
+        o.separator ""
+        o.separator "Command:"
+        o.separator "  jobs      Run jobs"
+        o.separator "  streams   Run streams"
+        o.separator "  actions   Run actions"
+        o.separator ""
+        o.separator "Flags:"
+
+        o.on "-c", "--concurrency INT", Integer, "Threads to use" do |arg|
+          flags[:concurrency] = arg
         end
 
-        o.on "-r", "--require [PATH|DIR]", "Location of files to require" do |arg|
-          options[:require] = arg
+        o.on "-r", "--require PATH|DIR", "Location of files to require" do |arg|
+          flags[:require] = arg
         end
 
-        o.on "-t", "--timeout NUM", "Shutdown timeout" do |arg|
-          options[:timeout] = Integer(arg)
+        o.on "-t", "--timeout NUM", Integer, "Shutdown timeout" do |arg|
+          flags[:timeout] = arg
         end
 
         o.on "-C", "--config PATH", "Path to config file" do |arg|
-          options[:config_file] = arg
+          flags[:config_file] = arg
         end
 
-        o.on "-s", "--setup", "Load config, create streams and exit" do
-          load_config(options[:config_file])
+        o.on "-S", "--setup", "Load config, create streams and exit" do
+          load_config(flags[:config_file])
           create_streams
           puts "Cosmo streams were created/updated"
           exit(0)
         end
 
-        o.on "-v", "--version", "Print version and exit" do
+        o.on_tail "-v", "--version", "Print version" do
           puts "Cosmo #{VERSION}"
           exit(0)
         end
-      end
 
-      parser.banner = "cosmo [options]"
-      parser.on_tail "-h", "--help", "Show help" do
-        puts parser
-        exit(1)
+        o.on_tail "-h", "--help", "Show help" do
+          puts o
+          exit(0)
+        end
       end
+    end
 
-      parser
+    def options_parser(command, options)
+      case command
+      when "jobs"
+        OptionParser.new do |o|
+          o.banner = "Usage: cosmo jobs [options]"
+
+          o.on "--stream NAME", "Job's stream" do |arg|
+            options[:stream] = arg
+          end
+
+          o.on "--subject NAME", "Job's subject" do |arg|
+            options[:subject] = arg
+          end
+        end
+      when "streams"
+        OptionParser.new do |o|
+          o.banner = "Usage: cosmo streams [options]"
+
+          o.on "--stream NAME", "Specify stream name" do |arg|
+            options[:stream] = arg
+          end
+
+          o.on "--subject NAME", "Specify subject name" do |arg|
+            options[:subject] = arg
+          end
+
+          o.on "--consumer_name NAME", "Specify consumer name" do |arg|
+            options[:consumer_name] = arg
+          end
+
+          o.on "--batch_size NUM", Integer, "Number of messages in the batch" do |arg|
+            options[:batch_size] = arg
+          end
+        end
+      when "actions"
+        OptionParser.new do |o|
+          o.banner = "Usage: cosmo actions [options]"
+
+          o.on "-n", "--nop", "Do nothing and exit" do
+            exit(0)
+          end
+        end
+      end
     end
 
     # rubocop:disable Layout/TrailingWhitespace,Lint/IneffectiveAccessModifier
