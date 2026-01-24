@@ -37,7 +37,7 @@ RSpec.describe Cosmo::Utils::ThreadPool do
       blocked = nil
       thread = Thread.new do
         blocked = true
-        pool.post { blocked = :working }
+        pool.post { blocked = false }
         blocked = false
       end
 
