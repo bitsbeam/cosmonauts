@@ -18,7 +18,7 @@ module Cosmo
       @client = Client.instance
     end
 
-    def publish(subject, data, serializer: nil, **options) # rubocop:disable Naming/PredicateMethod
+    def publish(subject, data, serializer: nil, **options)
       payload = (serializer || Stream::Serializer).serialize(data)
       @client.publish(subject, payload, **options)
     end
@@ -32,7 +32,7 @@ module Cosmo
     end
 
     def publish_batch(subject, batch, **options)
-      batch.each { publish(subject, it, **options) }
+      batch.each { publish(subject, _1, **options) }
     end
   end
 end

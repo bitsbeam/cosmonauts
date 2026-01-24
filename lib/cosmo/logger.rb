@@ -60,7 +60,7 @@ module Cosmo
     end
 
     def self.instance
-      @instance ||= ::Logger.new($stdout).tap { it.formatter = SimpleFormatter.new }
+      @instance ||= ::Logger.new($stdout).tap { _1.formatter = SimpleFormatter.new }
     end
   end
 end

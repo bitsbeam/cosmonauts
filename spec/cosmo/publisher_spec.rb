@@ -77,7 +77,7 @@ RSpec.describe Cosmo::Publisher do
       ack = publisher.publish(subject_name, data, header: { "key" => "value" })
 
       message = client.get_message(stream_name, ack.seq)
-      expect(message.headers).to eq({"key" => "value"})
+      expect(message.headers).to eq({ "key" => "value" })
     end
   end
 

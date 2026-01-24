@@ -6,7 +6,7 @@ RSpec.shared_context "Global helpers" do
   end
 
   def clean_streams
-    client.list_streams.each { client.delete_stream(it) }
+    client.list_streams.each { client.delete_stream(_1) }
   rescue NATS::JetStream::Error::NotFound
     # nop
   end

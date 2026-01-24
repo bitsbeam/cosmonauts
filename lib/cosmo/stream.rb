@@ -39,7 +39,7 @@ module Cosmo
                                consumer_name: "consumer-#{class_name}",
                                publisher: { subject: "#{class_name}.default" })
         subjects = default_options.dig(:consumer, :subjects)
-        subjects&.map! { format(it, name: class_name) }
+        subjects&.map! { format(_1, name: class_name) }
 
         subject = default_options[:publisher][:subject]
         default_options[:publisher][:subject] = format(subject, name: class_name)

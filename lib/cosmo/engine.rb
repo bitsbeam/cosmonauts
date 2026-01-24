@@ -28,7 +28,7 @@ module Cosmo
       Logger.info "Starting processing, hit Ctrl-C to stop"
 
       @processors = type && PROCESSORS.key?(type.to_sym) ? [PROCESSORS[type.to_sym]] : PROCESSORS.values
-      @processors = @processors.map { it.run(@pool, @running) }
+      @processors = @processors.map { _1.run(@pool, @running) }
 
       signal = handler.wait
       Logger.info "Shutting down... (#{signal} received)"

@@ -43,7 +43,7 @@ module Cosmo
         metadata = messages.last.metadata
         processor = @processors[stream_name]
         serializer = processor.class.default_options.dig(:publisher, :serializer)
-        messages = messages.map { Message.new(it, serializer:) }
+        messages = messages.map { Message.new(_1, serializer:) }
 
         Logger.with(
           seq_stream: metadata.sequence.stream,
@@ -65,14 +65,14 @@ module Cosmo
 
       def setup_configs # rubocop:disable Metrics/AbcSize
         @configs.merge!(
-          Config.dig(:consumers, :streams).to_h do
-            klass = Utils::String.safe_constantize(it[:class])
-            [it[:stream].to_sym, klass ? it.merge(class: klass) : nil]
+          Config.dig(:consumers, :streams).to_h do |config|
+            klass = Utils::String.safe_constantize(config[:class])
+            [config[:stream].to_sym, klass ? config.merge(class: klass) : nil]
           end.compact
         )
         @configs.merge!(
-          Config.system[:streams].to_h do
-            [it.default_options[:stream].to_sym, it.default_options.merge(class: it)]
+          Config.system[:streams].to_h do |klass|
+            [klass.default_options[:stream].to_sym, klass.default_options.merge(class: klass)]
           end
         )
       end

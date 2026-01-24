@@ -15,8 +15,13 @@ Style/Documentation:
 Style/FormatStringToken:
   Enabled: false
 
-Lint/ItWithoutArgumentsInBlock:
-  Enabled: false
+Lint/NestedPercentLiteral:
+  Exclude:
+    - spec/**/*.rb
+
+Lint/EmptyBlock:
+  Exclude:
+    - spec/**/*.rb
 
 Layout/LineLength:
   Max: 160
