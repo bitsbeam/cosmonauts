@@ -38,12 +38,11 @@ jobs:
           - 6222:6222
           - 8222:8222
         options: >-
+          -js
           --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:8222/healthz || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        env:
-          NATS_ARGS: "-js -m 8222"
 
     steps:
       - name: Checkout code
@@ -55,16 +54,7 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
-      - name: Wait for NATS to be ready
-        run: |
-          timeout 30 bash -c 'until curl -f http://localhost:8222/healthz; do sleep 1; done'
-
       - name: Run tests
         run: bundle exec rspec
         env:
           NATS_URL: nats://localhost:4222
-
-      - name: Check NATS status (on failure)
-        if: failure()
-        run: |
-          curl -s http://localhost:8222/varz || echo "Could not get NATS status"
