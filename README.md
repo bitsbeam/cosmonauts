@@ -23,7 +23,6 @@ disk-backed persistence.
 - [Monitoring](#-monitoring)
 - [Examples](#-examples)
 
----
 
 ## 🎯 Why?
 Among many others, why creating another? Cosmonats is a background processing framework for Ruby, powered by **[NATS](https://nats.io/)**.
@@ -67,7 +66,6 @@ Built on **NATS**, `cosmonats` provides:
 ✅ **High throughput & low latency** - Millions of messages per second  
 ✅ **Stream processing** - Beyond simple job queues  
 
----
 
 ## ✨ Features
 
@@ -87,7 +85,6 @@ Built on **NATS**, `cosmonats` provides:
 - **Exactly-once semantics** - With proper configuration
 - **Custom serialization** - JSON, MessagePack, Protobuf support
 
----
 
 ## 📦 Installation
 
@@ -98,7 +95,6 @@ gem "cosmonats"
 
 **Requirements:** Ruby 3.1.0+, NATS Server ([installation guide](https://docs.nats.io/running-a-nats-service/introduction/installation))
 
----
 
 ## 🚀 Quick Start
 
@@ -157,7 +153,6 @@ cosmo -C config/cosmo.yml --setup
 cosmo -C config/cosmo.yml -c 10 -r ./app/jobs jobs
 ```
 
----
 
 ## 💡 Core Concepts
 
@@ -274,7 +269,6 @@ export COSMO_JOBS_FETCH_TIMEOUT=0.1
 export COSMO_STREAMS_FETCH_TIMEOUT=0.1
 ```
 
----
 
 ## 🔧 Advanced Usage
 
@@ -340,7 +334,6 @@ jid = SendEmailJob.perform_async(123, 'welcome')
 assert_kind_of String, jid
 ```
 
----
 
 ## 🖥️ CLI Reference
 
@@ -364,7 +357,6 @@ cosmo -C config/cosmo.yml -c 20                        # Both
 | `-t, --timeout NUM` | Shutdown timeout (sec) | `-t 60` |
 | `-S, --setup` | Setup streams & exit | `--setup` |
 
----
 
 ## 🚢 Deployment
 
@@ -433,7 +425,6 @@ sudo systemctl start cosmo
 sudo systemctl status cosmo
 ```
 
----
 
 ## 📊 Monitoring
 
@@ -458,7 +449,6 @@ info.state.consumer_count # Number of consumers
 - `jetstream_consumer_delivered_msgs` - Delivered messages
 - `jetstream_consumer_ack_pending` - Pending acknowledgments
 
----
 
 ## 💼 Examples
 
@@ -515,7 +505,6 @@ class AnalyticsAggregator
 end
 ```
 
----
 
 <div align="center">
 
